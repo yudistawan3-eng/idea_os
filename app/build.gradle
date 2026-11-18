@@ -9,8 +9,8 @@ android {
         minSdk 24
         targetSdk 36
         // versionCode otomatis naik di GitHub Actions (nomor run), versionName dari tag/input
-        versionCode (System.getenv("VERSION_CODE") ?: "1").toInteger()
-        versionName System.getenv("VERSION_NAME") ?: "1.0.0"
+        versionCode = Integer.parseInt(System.getenv("VERSION_CODE") ?: "1")
+        versionName = (System.getenv("VERSION_NAME") ?: "1.0.0")
         buildConfigField "String", "APP_URL", '"https://script.google.com/macros/s/AKfycbzw0DbVTktK2EBzLK8RANBXc-7qsrGF70dJnkbVl76Pw8FLPAi1arEx9SYKahxWlv80Fg/exec"'
     }
 
