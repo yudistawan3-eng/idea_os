@@ -1,0 +1,2 @@
+-keepclassmembers class com.ici.hris.MainActivity$AndroidBridge { @android.webkit.JavascriptInterface <methods>; }
+-keepattributes JavascriptInterface
