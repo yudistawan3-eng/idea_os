@@ -1,7 +1,19 @@
-pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+pluginManagement {
+    repositories {
+        google()
+        maven { url 'https://maven-central.storage-download.googleapis.com/maven2/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories { google(); mavenCentral() }
+    repositories {
+        google()
+        // Mirror Maven Central milik Google (cadangan bila repo.maven.apache.org menolak runner)
+        maven { url 'https://maven-central.storage-download.googleapis.com/maven2/' }
+        mavenCentral()
+    }
 }
 rootProject.name = "IdeaOS"
 include ':app'
