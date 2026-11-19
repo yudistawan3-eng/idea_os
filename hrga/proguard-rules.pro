@@ -1,0 +1,2 @@
+-keepclassmembers class com.ideacreative.hrga.MainActivity$AndroidBridge { @android.webkit.JavascriptInterface <methods>; }
+-keepattributes JavascriptInterface

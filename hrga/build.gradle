@@ -1,0 +1,47 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.ideacreative.hrga'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.ideacreative.hrga'
+        minSdk 24
+        targetSdk 36
+        // versionCode otomatis naik di GitHub Actions (nomor run), versionName dari tag/input
+        versionCode = Integer.parseInt(System.getenv("VERSION_CODE") ?: "1")
+        versionName = (System.getenv("VERSION_NAME") ?: "1.0.0")
+        buildConfigField "String", "APP_URL", '"https://script.google.com/macros/s/AKfycby34UZTx162SsqW3l0Pxum_R25eH0VXs-RxR1N-k5r9jixq-CJ_4km2hg8kDgEHjSTo/exec"'
+    }
+
+    signingConfigs {
+        release {
+            def ks = System.getenv("KEYSTORE_PATH")
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (System.getenv("KEYSTORE_PATH")) signingConfig signingConfigs.release
+        }
+    }
+    buildFeatures { buildConfig true }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+}

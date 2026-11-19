@@ -44,7 +44,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           VERSION_CODE: ${{ github.run_number }}
           VERSION_NAME: ${{ github.event.inputs.version_name || github.ref_name }}
-        run: gradle :app:bundleRelease :app:assembleRelease --no-daemon
+        run: gradle :app:bundleRelease :app:assembleRelease :hrga:bundleRelease :hrga:assembleRelease --no-daemon
 
       - uses: actions/upload-artifact@v4
         with:
@@ -52,6 +52,13 @@ jobs:
           path: |
             app/build/outputs/bundle/release/*.aab
             app/build/outputs/apk/release/*.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HRGA-${{ github.run_number }}
+          path: |
+            hrga/build/outputs/bundle/release/*.aab
+            hrga/build/outputs/apk/release/*.apk
 
       # Opsional: upload otomatis ke jalur Internal Testing setelah secret PLAY_SERVICE_ACCOUNT_JSON diisi
       - name: Upload ke Play Console (internal)

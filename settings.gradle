@@ -16,4 +16,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "IdeaOS"
-include ':app'
+include ':app', ':hrga'
