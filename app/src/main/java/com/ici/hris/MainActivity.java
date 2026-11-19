@@ -97,10 +97,13 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new AppWebViewClient());
         webView.setWebChromeClient(new AppChromeClient());
 
-        // Tarik-ke-bawah hanya aktif saat halaman di paling atas
-        swipe.setColorSchemeResources(R.color.orange);
-        swipe.setOnChildScrollUpCallback((parent, child) -> webView.getScrollY() > 0);
-        swipe.setOnRefreshListener(this::reload);
+        // Tarik-untuk-refresh DIMATIKAN: isi GAS berjalan di dalam iframe sehingga WebView selalu
+        // terlihat "di paling atas" dan setiap scroll ke atas memicu reload. Pakai tombol refresh di aplikasi.
+        swipe.setEnabled(false);
+        // Hilangkan efek "layar ikut tertarik/bergeser" saat mentok scroll
+        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setHorizontalScrollBarEnabled(false);
 
         if (savedInstanceState != null) webView.restoreState(savedInstanceState);
         else loadApp();
