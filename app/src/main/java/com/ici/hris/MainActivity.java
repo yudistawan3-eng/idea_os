@@ -60,6 +60,25 @@ public class MainActivity extends Activity {
 
     private boolean showingOffline = false;
 
+    /**
+     * Halaman luar Apps Script menyisipkan banner peringatan Google di atas iframe aplikasi
+     * (muncul belakangan sehingga tampilan "bergeser"). Script ini menyembunyikan semua elemen
+     * selain iframe aplikasi dan membuat iframe selalu penuh satu layar, termasuk banner yang
+     * disisipkan setelah halaman selesai dimuat.
+     */
+    private static final String FIT_SCRIPT =
+        "(function(){try{" +
+        "if(!document.getElementById('ideaos-fit')){var st=document.createElement('style');st.id='ideaos-fit';" +
+        "st.textContent='html,body{margin:0!important;padding:0!important;width:100%!important;height:100%!important;overflow:hidden!important;overscroll-behavior:none!important;background:#F8F4EE}';" +
+        "(document.head||document.documentElement).appendChild(st);}" +
+        "function fit(){var f=document.getElementById('sandboxFrame')||document.querySelector('iframe');if(!f)return;" +
+        "var el=f;while(el&&el!==document.body&&el.parentElement){var p=el.parentElement;" +
+        "for(var i=0;i<p.children.length;i++){var c=p.children[i];if(c!==el&&c.tagName!=='SCRIPT'&&c.tagName!=='STYLE'&&c.tagName!=='LINK')c.style.setProperty('display','none','important');}" +
+        "el.style.setProperty('margin','0','important');el.style.setProperty('padding','0','important');el=p;}" +
+        "f.style.cssText='position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100%!important;border:0!important;margin:0!important;z-index:1';}" +
+        "fit();if(!window.__ideaosObs){window.__ideaosObs=new MutationObserver(fit);window.__ideaosObs.observe(document.documentElement,{childList:true,subtree:true});}" +
+        "}catch(e){}})();";
+
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +107,12 @@ public class MainActivity extends Activity {
         s.setJavaScriptCanOpenWindowsAutomatically(true);
         s.setAllowFileAccess(false);
         s.setUserAgentString(s.getUserAgentString() + " IdeaOSApp/" + BuildConfig.VERSION_NAME);
+        s.setTextZoom(100);              // ukuran font sistem besar tidak merusak tata letak
+        s.setUseWideViewPort(true);
+        s.setLoadWithOverviewMode(false);
+        s.setSupportZoom(false);
+        s.setBuiltInZoomControls(false);
+        s.setDisplayZoomControls(false);
 
         CookieManager cm = CookieManager.getInstance();
         cm.setAcceptCookie(true);
@@ -158,7 +183,13 @@ public class MainActivity extends Activity {
             return true;
         }
         @Override public void onPageStarted(WebView view, String url, Bitmap favicon) { progress.setVisibility(View.VISIBLE); }
-        @Override public void onPageFinished(WebView view, String url) { progress.setVisibility(View.GONE); swipe.setRefreshing(false); }
+        @Override public void onPageFinished(WebView view, String url) {
+            progress.setVisibility(View.GONE); swipe.setRefreshing(false);
+            if (url != null && url.contains("script.google.com")) view.evaluateJavascript(FIT_SCRIPT, null);
+        }
+        @Override public void onPageCommitVisible(WebView view, String url) {
+            if (url != null && url.contains("script.google.com")) view.evaluateJavascript(FIT_SCRIPT, null);
+        }
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             if (request.isForMainFrame()) showOffline();
